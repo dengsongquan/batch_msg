@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>批量发送短信(szy)</title>
+<!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
+    <link rel="stylesheet" href="/message/css/element-ui_lib_theme-chalk_index.css"/>
+<!--    <script src="/message/js/element-ui_lib_index.js"></script>-->
+<!--    <link rel="stylesheet" href="/message/css/element-ui_lib_theme-chalk_index.css">-->
+    <style>
+        .title{
+            margin: 0;
+            padding: 0;
+            font-size: 17px;
+            font-weight: 700;
+            color: rgba(0,0,0,.85);
+        }
+        body {
+            margin: 0;
+            padding: 0 20px;
+            font-size: 15px;
+        }
+        .part1{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background: white;
+            padding: 18px 0 18px 30px;
+        }
+        ul {
+            padding: 0;
+        }
+
+        ul, li {
+            list-style: none;
+            margin: 0;
+            padding: 0
+        }
+
+        label {
+            font-weight: normal;
+        }
+
+        .download .title {
+            margin-top: 15px;
+            margin-bottom: 8px;
+            padding-top: 10px;
+            margin-left: 20px;
+        }
+        .download{
+            height: 40px;
+            padding: 0 0;
+            background-color: rgba(0,0,0,.02);
+            border-bottom: 1px solid #e6eaee;
+            align-items: center;
+        }
+
+        .download_list li + li {
+            margin-top: 5px;
+        }
+
+        .download_list .msg {
+            color: #ff0000;
+            display: inline-block;
+            font-size: 15px;
+        }
+
+        .download_list .btns {
+            display: inline-block;
+        }
+
+        .download_list .btns a {
+            display: inline-block;
+            background: #00d8d0;
+            color: #ffffff;
+            padding: 1px 5px 1px 5px;
+            border: 1px solid #666;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .download_list .btns a:hover {
+            background: #02b5ae;
+        }
+
+        .download_list .btns a + a {
+            margin-left: 15px;
+        }
+
+        .import_file .temp_box {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .import_file .temp_box select {
+            padding: 1px 5px 5px 5px;
+        }
+
+        .import_file .temp_box .btn {
+            //padding: 3px 12px 4px 12px;
+            //margin-left: 15px;
+        }
+
+        .history_list form {
+            display: flex;
+            align-items: center
+        }
+
+        .history_list .form_item + .form_item {
+            margin-left: 15px;
+        }
+
+        .history_list select {
+            padding: 1px 5px 5px 5px;
+        }
+
+        .history_list button {
+            margin-left: 15px;
+            padding: 3px 12px 4px 12px;
+        }
+
+        .page_box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .page_box .l {
+            display: flex;
+            align-items: center;
+        }
+
+        .page_box .r {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .page_box .r li {
+            position: relative;
+            padding: 6px 12px;
+            line-height: 1.42857143;
+            color: #337ab7;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-left: -1px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .page_box .r li.prev {
+            margin-left: 0;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .page_box .r li.next {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .page_box .r li.active {
+            color: #fff;
+            background-color: #337ab7;
+            border-color: #337ab7;
+        }
+
+        .list_wrap {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .list_box {
+            min-width: 980px;
+        }
+
+        .list_wrap .col_box .col1 {
+            flex: 13;
+        }
+
+        .list_wrap .col_box .col2 {
+            flex: 8;
+        }
+
+        .list_wrap .col_box .col3 {
+            flex: 9;
+        }
+
+        .list_wrap .col_box .col4 {
+            flex: 34;
+        }
+
+        .list_wrap .col_box .col5 {
+            flex: 17;
+        }
+
+        .list_wrap .col_box .col6 {
+            flex: 20;
+        }
+
+        .list_wrap .col_box .col7 {
+            flex: 12;
+        }
+
+        .list_wrap .col_box .col8 {
+            flex: 12;
+        }
+
+        .list_wrap .col_box .col9 {
+            flex: 24;
+        }
+
+        .list_head {
+            display: flex;
+        }
+
+        .list_head li {
+            height: 40px;
+            font-weight: bold;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .list_head li + li {
+            border-left: 1px solid #ddd;
+        }
+
+        .list_body {
+            max-height: calc(100vh - 340px);
+            overflow-y: auto;
+        }
+
+        .list_body .list_tr:nth-child(odd) {
+            background: #f9f9f9;
+        }
+
+        .list_body .list_tr:hover {
+            background: #ccc;
+        }
+
+        .list_body .info .list_td {
+            background: #d9edf7;
+        }
+
+        .list_body .list_tr {
+            display: flex;
+            min-height: 37px;
+        }
+
+        .list_body .list_tr + .list_tr {
+            border-top: 1px solid #ddd;
+        }
+
+        .list_body .list_td {
+            padding: 5px;
+        }
+
+        .list_body .list_td + .list_td {
+            border-left: 1px solid #ddd;
+        }
+
+        .list_body .td_inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .list_body .td_inner span {
+            word-wrap: break-word;
+            word-break: break-all;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .pr17 {
+            padding-right: 17px;
+        }
+
+        .no_rows {
+            width: 100%;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal_wrap {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1050;
+            display: block;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
+            outline: 0;
+        }
+
+        .modal_box {
+            width: 850px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .modal_cont {
+            position: relative;
+            background-color: #fff;
+            -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+            border: 1px solid #999;
+            /*border: 1px solid rgba(0, 0, 0, .2);*/
+            border-radius: 6px;
+            outline: 0;
+            -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+        }
+
+        .tab_wrap {
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab_wrap .tab {
+            display: flex;
+        }
+
+        .tab_wrap .tab button {
+            border: none;
+            background: none;
+            font-size: 18px;
+            padding: 0 15px;
+            position: relative;
+            height: 44px;
+            display: inline-block;
+            outline: none;
+        }
+
+        .tab_wrap .tab button.active {
+            font-weight: bold;
+            color: #449d44;
+        }
+
+        .tab_wrap .tab button.active::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #449d44;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+
+        .modal_list_wrap {
+            padding: 15px 18px;
+            height: 60vh;
+        }
+
+        .modal_list {
+            height: 100%;
+            width: 100%;
+        }
+
+        .modal_list .list_msg {
+            display: flex;
+            align-items: center;
+        }
+
+        .modal_list .list_msg li {
+            padding-right: 10px;
+        }
+
+        .modal_list .list_msg .sp2 {
+            width: 60px;
+            display: inline-block;
+        }
+
+        .modal_list .list_msg .li1 .sp2 {
+            display: inline-block;
+            width: 150px;
+        }
+
+        .modal_list .search {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .modal_list .search .btn {
+            padding: 3px 12px 4px 12px;
+            margin-left: 15px;
+        }
+
+        .list_wrap2 {
+            margin-top: 10px;
+            width: 100%;
+            height: calc(100% - 120px);
+        }
+
+        .list_box2 {
+            width: 100%;
+            height: 100%;
+        }
+
+        .list_wrap2 .col_box .col1 {
+            flex: 9;
+        }
+
+        .list_wrap2 .col_box .col2 {
+            flex: 13;
+        }
+
+        .list_wrap2 .col_box .col3 {
+            flex: 16;
+        }
+
+        .list_wrap2 .col_box .col4 {
+            flex: 34;
+        }
+
+        .list_wrap2 .col_box .col5 {
+            flex: 15;
+        }
+
+        .list_wrap2 .col_box .col6 {
+            flex: 15;
+        }
+
+        .list_head2 {
+            display: flex;
+            border-radius: 4px 4px 0 0;
+            border-color: #ddd;
+            border-style: solid;
+            border-width: 1px 1px 1px 1px;
+        }
+
+        .list_head2 li {
+            height: 40px;
+            font-weight: bold;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .list_head2 li + li {
+            border-left: 1px solid #ddd;
+        }
+
+        .list_body2 {
+            max-height: calc(100% - 40px);
+            overflow-y: auto;
+            border-color: #ddd;
+            border-style: solid;
+            border-width: 0 1px 1px 1px;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .list_body2 .list_tr {
+            display: flex;
+            min-height: 38px;
+            border-top: 1px solid #ddd;
+            margin-top: -1px;
+        }
+
+        .list_body2 .list_td {
+            padding: 5px;
+        }
+
+        .list_body2 .list_td + .list_td {
+            border-left: 1px solid #ddd;
+        }
+
+        .list_body2 .td_inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .list_body2 .td_inner span {
+            display: inline-block;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .no_rows2 {
+            width: 100%;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f9f9f9;
+            border-color: #ddd;
+            border-style: solid;
+            border-width: 0 1px 1px 1px;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .modal_foot {
+            padding: 15px 18px;
+            border-top: 1px solid #ddd;
+        }
+
+        .modal_foot .l {
+            float: left;
+        }
+
+        .modal_foot .r {
+            float: right;
+        }
+
+        .modal_foot::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        .modal_foot .msg {
+            display: inline-block;
+        }
+
+        @keyframes dot {
+            0% {
+                content: ''
+            }
+            10% {
+                content: '.'
+            }
+            30% {
+                content: '. .'
+            }
+            50% {
+                content: '. . .'
+            }
+            70% {
+                content: '. . . .'
+            }
+            90% {
+                content: '. . . . .'
+            }
+            100% {
+                content: ''
+            }
+        }
+
+        .modal_foot .msg::after {
+            content: "";
+            display: inline;
+            margin-left: 5px;
+            font-weight: bold;
+            animation-name: dot;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+        }
+
+        .overhide {
+            overflow: hidden;
+        }
+
+        .vtips {
+            position: fixed;
+            top: 46vh;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+            transition: opacity 600ms;
+        }
+
+        .vtips .content {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.12rem 0.2rem;
+            color: #fff;
+            font-size: 0.13rem;
+            border-radius: 0.04rem;
+            box-sizing: border-box;
+        }
+
+        .vtips-enter, .vtips-leave-active {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body style="background: #f2f5f8 !important;">
+<div id="app" class="app" ></div>
+
+<script type="text/javascript" src="/message/js/vue.js"></script>
+<!-- 必须在vue后引入 -->
+<script src="/message/js/element-ui_lib_index.js"></script>
+<script type="text/javascript" src="/message/js/ajax.js"></script>
+<!--main-->
+<script type="x-template" id="cont_temp">
+    <div class="cont_wrap" >
+        <!--批量发送短信-->
+        <div class="download" >
+            <h3 class="title">批量发送短信</h3>
+            <div class="part1">
+                <ul class="download_list">
+                    <li>
+                        <div class="msg">1.首次使用,请点击:</div>
+                        <div class="btns">
+                            <a href="/message/batch/template/download/?typeId=1" target="_blank">下载导入模板1(学生学号)</a>
+                            <a href="/message/batch/template/download/?typeId=2" target="_blank">下载导入模板2(教师工号)</a>
+                            <a href="/message/batch/template/download/?typeId=3" target="_blank">下载导入模板3(手机号)</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="msg">2.请勿修改表头结构及内容。</div>
+                    </li>
+                    <li>
+                        <div class="msg">3.所有“名称”字段请按照已上传的信息准确填写，不准确将无法匹配。</div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!--导入文件-->
+        <div class="history_list" style="margin-top: 150px;">
+            <h3 class="title">导入文件</h3>
+           <div class="temp_box part1">
+               <input type="file" @change="fileChange"
+                      accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+               <label>模板类型：</label>
+               <el-select v-model="temp_type_value" ref="select_temp" @change="typeChange">
+                   <el-option
+                    v-for="item in temp_type"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                   >
+                   </el-option>
+               </el-select>
+<!--                <select ref="select_temp" @change="typeChange">-->
+<!--                    <option value="1" selected>模板1(学生学号)</option>-->
+<!--                    <option value="2">模板2(教师工号)</option>-->
+<!--                    <option value="0">模板3(手机号)</option>-->
+<!--                </select>-->
+                <el-button v-if="num_file && !uploading" plain @click="confirmImport">确认导入</el-button>
+                <el-button plain v-else disabled>确认导入</el-button>
+            </div>
+        </div>
+
+        <!--列表搜索-->
+        <div class="history_list">
+            <h3>历史列表</h3>
+            <form id="search_history_form" style="" enctype="multipart/form-data" action="">
+                <div class="form_item">
+                    <label>批次号：</label>
+                    <input style="width: 250px" placeholder="批次号" type="text" v-model="search.codeNumber"/>
+                </div>
+                <div class="form_item">
+                    <label>发送状态：</label>
+                    <select v-model="search.status">
+                        <option value="0">全部</option>
+                        <option value="1">上传成功</option>
+                        <option value="2">上传失败</option>
+                        <option value="3">发送成功</option>
+                        <option value="4">发送失败</option>
+                    </select>
+                </div>
+                <el-button type="primary" @click="handleSearch">搜索</el-button>
+                <el-button type="primary" @click="getList">刷新</el-button>
+            </form>
+        </div>
+
+        <!--历史列表-->
+        <div class="list_wrap">
+            <div class="list_box">
+                <ul class="list_head col_box" :class="{pr17:scroll_flag}">
+                    <li class="col1">工号/学号</li>
+                    <li class="col2">类型</li>
+                    <li class="col3">姓名</li>
+                    <li class="col4">短信内容</li>
+                    <li class="col5">手机号</li>
+                    <li class="col6">导入批次号</li>
+                    <li class="col7">状态</li>
+                    <li class="col8">返回信息</li>
+                    <li class="col9">日期</li>
+                </ul>
+                <ul v-if="rows.length>0" class="list_body" ref="list_body">
+                    <li v-for="item in rows" :key="item.id" class="list_tr col_box" :class="{info:row_id==item.id}"
+                        @click="row_id=item.id">
+                        <div class="list_td col1">
+                            <div class="td_inner"><span>{{item.userId}}</span></div>
+                        </div>
+                        <div class="list_td col2">
+                            <div class="td_inner"><span>{{item.typeId}}</span></div>
+                        </div>
+                        <div class="list_td col3">
+                            <div class="td_inner"><span>{{item.name}}</span></div>
+                        </div>
+                        <div class="list_td col4">
+                            <div class="td_inner"><span>{{item.message}}</span></div>
+                        </div>
+                        <div class="list_td col5">
+                            <div class="td_inner"><span>{{item.telephone}}</span></div>
+                        </div>
+                        <div class="list_td col6">
+                            <div class="td_inner"><span>{{item.codeNumber}}</span></div>
+                        </div>
+                        <div class="list_td col7">
+                            <div class="td_inner"><span>{{item.status}}</span></div>
+                        </div>
+                        <div class="list_td col8">
+                            <div class="td_inner"><span>{{item.resultMessage}}</span></div>
+                        </div>
+                        <div class="list_td col9">
+                            <div class="td_inner"><span>{{item.createAt}}</span></div>
+                        </div>
+                    </li>
+                </ul>
+                <div v-else class="no_rows">
+                    没有找到匹配的记录
+                </div>
+            </div>
+        </div>
+        <Page :total="total" :current="page" @pageChange="pageChange"></Page>
+
+        <!--本次导入的列表 弹窗-->
+        <ModalWrap ref="m_wrap" v-show="modal_flag" :import-res="import_res" @on-cancel="modalCancel"></ModalWrap>
+    </div>
+</script>
+<!--导入列表的弹窗-->
+<script type="x-template" id="modal_list">
+    <div class="modal_list">
+        <ul class="list_msg">
+            <li class="li1"><span class="sp1">批次号：</span><span class="sp2">{{importRes.codeNumber}}</span></li>
+            <template v-if="type==1">
+                <li><span class="sp1">总数：</span><span class="sp2">{{upload_total}}</span></li>
+                <li><span class="sp1">成功：</span><span class="sp2">{{upload_res.successSum}}</span></li>
+                <li><span class="sp1">失败：</span><span class="sp2">{{upload_res.failureSum}}</span></li>
+            </template>
+            <template v-else>
+                <li><span class="sp1">总数：</span><span class="sp2">{{send_res.totalSum}}</span></li>
+                <li><span class="sp1">成功：</span><span class="sp2">{{send_res.successSum}}</span></li>
+                <li><span class="sp1">失败：</span><span class="sp2">{{send_res.failureSum}}</span></li>
+            </template>
+        </ul>
+        <div class="search">
+            <select v-model="status">
+                <option value="0">全部</option>
+                <template v-if="type==1">
+                    <option value="1">上传成功</option>
+                    <option value="2">上传失败</option>
+                </template>
+                <template v-else>
+                    <option value="3">发送成功</option>
+                    <option value="4">发送失败</option>
+                </template>
+            </select>
+            <el-button type="button" class="btn btn-default" @click="handleSearch">搜索</el-button>
+        </div>
+        <div class="list_wrap2">
+            <div class="list_box2">
+                <ul class="list_head2 col_box" :class="{pr17:scroll_flag}">
+                    <li class="col1">用户名</li>
+                    <li class="col2">学号/工号</li>
+                    <li class="col3">手机号</li>
+                    <li class="col4">msg</li>
+                    <li class="col5">状态</li>
+                    <li class="col6">返回结果</li>
+                </ul>
+                <ul v-if="rows.length>0" class="list_body2" ref="list_body2">
+                    <li v-for="item in rows" :key="item.id" class="list_tr col_box">
+                        <div class="list_td col1">
+                            <div class="td_inner"><span>{{item.name}}</span></div>
+                        </div>
+                        <div class="list_td col2">
+                            <div class="td_inner"><span>{{item.userId}}</span></div>
+                        </div>
+                        <div class="list_td col3">
+                            <div class="td_inner"><span>{{item.telephone}}</span></div>
+                        </div>
+                        <div class="list_td col4">
+                            <div class="td_inner"><span>{{item.message}}</span></div>
+                        </div>
+                        <div class="list_td col5">
+                            <div class="td_inner"><span>{{item.status}}</span></div>
+                        </div>
+                        <div class="list_td col6">
+                            <div class="td_inner"><span>{{item.resultMessage}}</span></div>
+                        </div>
+                    </li>
+                </ul>
+                <div v-else class="no_rows2">没有找到匹配的记录</div>
+            </div>
+        </div>
+        <Page :total="total" :current="page" @pageChange="pageChange"></Page>
+    </div>
+</script>
+<script type="x-template" id="modal_wrap">
+    <div class="modal_wrap">
+        <div class="modal_box">
+            <div class="modal_cont">
+                <div class="tab_wrap">
+                    <div class="tab">
+                        <button type="button" :class="{active:active==1}" @click="active=1">导入列表</button>
+                        <button type="button" :class="{active:active==2}" @click="active=2">发送列表</button>
+                    </div>
+                    <button type="button" class="close" @click="handleClose">×</button>
+                </div>
+                <!--导入列表-->
+                <div v-show="active==1" class="modal_list_wrap">
+                    <ModalList :import-res="importRes" :type="1" ref="upload" @uploadFinish="changeUploadFlag"
+                               @uploadingRes="changeUploadingRes"></ModalList>
+                </div>
+                <!--发送列表-->
+                <div v-show="active==2" class="modal_list_wrap">
+                    <ModalList :import-res="importRes" :type="2" ref="send" @on-action="sendAction"></ModalList>
+                </div>
+                <div class="modal_foot">
+                    <span v-if="over_flag" class="l">发送结束，请查看发送列表</span>
+                    <template v-else>
+
+                        <span v-if="send_flag" class="msg l">
+                            正在发送短信(
+                            总数：{{send_res.totalSum}}，
+                            成功：{{send_res.successSum}}，
+                            失败：{{send_res.failureSum}})
+                        </span>
+                        <span v-else-if="upload_flag===1" class="msg l">
+                            正在上传文件(
+                            总数：{{upload_res.totalSum}}，
+                            成功：{{upload_res.successSum}}，
+                            失败：{{upload_res.failureSum}})
+                        </span>
+                        <button v-else type="button" class="btn btn-default l" @click="handleSend">确认发送</button>
+                    </template>
+
+
+                    <el-button type="primary" @click="handleClose">返回</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--分页-->
+<script type="x-template" id="page_temp">
+    <div class="page_temp">
+        <div v-if="c_total>=1" class="page_box">
+            <div class="l">
+                显示第 {{start}} 到第 {{end}} 条记录，总共 {{c_total}} 条记录每页显示
+                <select :value="page_size" @change="countChange">
+                    <option v-for="item in page_size_all" :key="item" :value="item">{{item}}</option>
+                </select>
+                条记录
+            </div>
+            <ul class="r">
+                <li class="prev" @click="pageChange('prev')">‹</li>
+                <li v-for="item in page_list" :key="item.k" @click="pageChange(item.v)" :class="{active:page===item.v}">
+                    {{item.v}}
+                </li>
+                <li class="next" @click="pageChange('next')">›</li>
+            </ul>
+        </div>
+    </div>
+</script>
+<!--提示-->
+<script type="x-template" id="vtips">
+    <transition name="vtips">
+        <div v-show="show" class="vtips">
+            <div class="content">{{msg}}</div>
+        </div>
+    </transition>
+</script>
+
+<script>
+    // 提示组件(组件构造器)
+    var vTips = Vue.extend({
+        data: function () {
+            return {
+                msg: '',
+                duration: 2000,
+                show: true
+            };
+        },
+        template: '#vtips',
+        mounted: function () {
+            var that = this;
+            var t1 = setTimeout(function () {
+                that.show = false;
+                clearTimeout(t1);
+                var t2 = setTimeout(function () {
+                    clearTimeout(t2);
+                    that.$el.parentNode.removeChild(that.$el);
+                }, 2000);
+            }, that.duration);
+        }
+    });
+    Vue.prototype.$Message = function (msg) {
+        var otips = new vTips({
+            data: {
+                msg: msg
+            },
+            el: document.createElement('div')
+        });
+        document.body.appendChild(otips.$el);
+    };
+
+    // 递增key
+    var key_index = 1;
+    Vue.prototype.$fk = function () {
+        return ++key_index;
+    }
+
+    // 分页
+    var Page = {
+        template: '#page_temp',
+        props: {
+            total: {
+                type: Number,
+                default: 0
+            },
+            current: {
+                type: Number,
+                default: 1
+            },
+            // 初始化时是否出发一次pageChange事件
+            initChange: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data: function () {
+            return {
+                c_total: 20,
+                page_all: 0, // 总页数
+                page_list: [], // 页码
+                page: 1,
+                page_size: 10, // 每页显示条目数
+                page_size_all: [10, 25, 50, 100],
+                start: 1, // 开始
+                end: 10, // 结束
+            }
+        },
+        methods: {
+            pageChange: function (num) {
+                if (num === 'prev') {
+                    if (this.page <= 1) {
+                        this.page = this.page_all;
+                    } else {
+                        this.page--;
+                    }
+                } else if (num === 'next') {
+                    if (this.page >= this.page_all) {
+                        this.page = 1;
+                    } else {
+                        this.page++;
+                    }
+                } else if (num === '...') {
+                } else {
+                    this.page = num;
+                }
+                this.setPageList();
+                this.setStartEnd();
+                this.$emit('pageChange', this.page, this.page_size, this.start, this.end);
+            },
+            countChange: function (e) {
+                this.page_size = Number(e.target.value);
+                this.setAll();
+                this.$emit('pageChange', this.page, this.page_size, this.start, this.end);
+            },
+            setStartEnd: function () {
+                if (this.page >= this.page_all) {
+                    this.setPage();
+                    this.start = (this.page - 1) * this.page_size + 1;
+                    this.end = this.c_total;
+                } else {
+                    this.start = (this.page - 1) * this.page_size + 1;
+                    this.end = this.page * this.page_size;
+                }
+            },
+            setPageList: function () {
+                if (this.page_all <= 0) {
+                    this.page_list = [];
+                }
+                if (this.page_all <= 7) {
+                    var list = [];
+                    for (var i = 1; i <= this.page_all; i++) {
+                        list.push({v: i, key: this.$fk()});
+                    }
+                    this.page_list = list;
+                } else {
+                    if (this.page >= 5 && this.page <= this.page_all - 4) {
+                        this.page_list = [
+                            {v: 1, key: this.$fk()}, {v: '...', key: this.$fk()},
+                            {v: this.page - 1, key: this.$fk()}, {v: this.page, key: this.$fk()}, {
+                                v: this.page + 1,
+                                key: this.$fk()
+                            },
+                            {v: '...', key: this.$fk()}, {v: this.page_all, key: this.$fk()}]
+                    } else if (this.page <= 4) {
+                        this.page_list = [
+                            {v: 1, key: this.$fk()}, {v: 2, key: this.$fk()}, {v: 3, key: this.$fk()}, {
+                                v: 4,
+                                key: this.$fk()
+                            }, {v: 5, key: this.$fk()},
+                            {v: '...', key: this.$fk()}, {v: this.page_all, key: this.$fk()}];
+                    } else {
+                        this.page_list = [
+                            {v: 1, key: this.$fk()}, {v: '...', key: this.$fk()},
+                            {v: this.page_all - 4, key: this.$fk()}, {
+                                v: this.page_all - 3,
+                                key: this.$fk()
+                            }, {v: this.page_all - 2, key: this.$fk()},
+                            {v: this.page_all - 1, key: this.$fk()}, {v: this.page_all, key: this.$fk()}]
+                    }
+                }
+            },
+            setPage: function () {
+                if (this.page > this.page_all) this.page = this.page_all || 1;
+            },
+            setTotal: function () {
+                this.c_total = parseInt(this.total);
+                if (this.c_total >= 1) {
+                    this.page_all = Math.ceil(this.c_total / this.page_size);
+                } else {
+                    this.page_all = 0;
+                }
+            },
+            initPage: function () {
+                if (this.current <= 0) return;
+                if (this.current <= this.page_all) {
+                    this.page = this.current;
+                } else {
+                    this.setPage();
+                }
+            },
+
+            setAll: function () {
+                this.setTotal();
+                this.setPage();
+                this.setPageList();
+                this.setStartEnd();
+            },
+            initAll: function () {
+                this.setTotal();
+                this.initPage();
+                this.setPageList();
+                this.setStartEnd();
+            }
+        },
+        created: function () {
+            this.initAll();
+            if (this.initChange) {
+                this.$emit('pageChange', this.page, this.page_size, this.start, this.end);
+            }
+        },
+        watch: {
+            total: function (val) {
+                if (this.c_total !== val) {
+                    this.setAll();
+                }
+                ;
+            },
+            current: function (val) {
+                if (this.page !== val) {
+                    this.initPage();
+                    this.setPageList();
+                    this.setStartEnd();
+                }
+            }
+        }
+    }
+
+    // 导入列表的弹窗
+    var ModalList = {
+        template: '#modal_list',
+        components: {
+            Page: Page
+        },
+        props: {
+            importRes: {
+                type: Object,
+                default: function () {
+                    return {}
+                }
+            },
+            type: {
+                type: Number,
+                defalut: 1 // 列表类型 1导入列表 2发送列表
+            }
+        },
+        data: function () {
+            return {
+                status: '0', // 发送状态
+                status_copy: '0',
+                total: 0, // 总条目数
+                page: 1, // 当前页码
+                page_size: 10, // 每页条数
+                rows: [], // 列表数据
+                scroll_flag: false, // 是否有滚动条
+                send_flag: false, // 是否已经发送
+                timer: null, // 轮询定时器
+                send_res: {}, // 发送情况
+                polling_flag: false, // 是否正在轮询
+                upload_timer: null, // 轮询上传定时器
+                upload_polling_flag: false, // 上传是否正在轮询
+                upload_res: {}, // 上传发送情况
+                upload_status: '0', // 上传发送状态
+                upload_total: 0
+
+            }
+        },
+        methods: {
+            // 获取列表数据
+            getList: function () {
+                var that = this;
+                var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size, 'status=' + this.status_copy, 'codeNumber=' + this.importRes.codeNumber];
+                var url = '/message/batch/inputList/'
+                if (this.type === 2) url = '/message/batch/results'
+                this.$ajax({
+                    action: url + '?' + arr.join('&'),
+                    method: 'get',
+                    success: function (res) {
+                        if (that.total !== res.total) that.total = res.total;
+                        for (var i = 0; i < res.rows.length; i++) {
+                            var row = res.rows[i];
+                            for (var key in row) {
+                                if (key === 'userId' || key === 'typeId' || key === 'name' || key === 'telephone') {
+                                    if (!row[key]) row[key] = '--';
+                                } else if (key === 'status') {
+                                    if (row[key] == 1) {
+                                        row[key] = '上传成功';
+                                    } else if (row[key] == 2) {
+                                        row[key] = '上传失败';
+                                    } else if (row[key] == 3) {
+                                        row[key] = '发送成功';
+                                    } else if (row[key] == 4) {
+                                        row[key] = '发送失败';
+                                    } else {
+                                        row[key] = '状态异常';
+                                    }
+                                }
+                            }
+                        }
+                        that.rows = res.rows;
+                        that.$nextTick(function () {
+                            that.validScroll(that.$refs.list_body2);
+                        })
+                    },
+                    error: function () {
+                        console.log('列表获取失败1');
+                    }
+                })
+            },
+            // 跳页
+            pageChange: function (num, size) {
+                this.page = num;
+                if (size !== undefined) this.page_size = size;
+                this.getList();
+            },
+            // 点击搜索
+            handleSearch: function () {
+                this.status_copy = this.status;
+                this.pageChange(1);
+            },
+            // 判断是否有滚动条
+            validScroll: function (target) {
+                if (!target) {
+                    this.scroll_flag = false;
+                    return;
+                }
+                if (target.scrollHeight > target.offsetHeight) {
+                    this.scroll_flag = true;
+                } else {
+                    this.scroll_flag = false;
+                }
+            },
+            // 轮询
+            handlePolling: function () {
+                var that = this;
+                // 防止多个轮询
+                if (this.timer) return;
+                var count = 600; // 最多轮询600次数 大概10分钟
+                this.timer = setInterval(function () {
+                    if (count-- <= 0) {
+                        clearInterval(that.timer);
+                        return;
+                    }
+                    if (that.polling_flag) return;
+                    that.polling_flag = true;
+                    that.$ajax({
+                        action: '/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=2',
+                        method: 'get',
+                        success: function (res) {
+                            that.polling_flag = false;
+                            if (res.code === 0) {
+                                that.send_res = res.data;
+                                that.$emit('on-action', 1, res.data);
+                                if (res.data.isFinish === 1) {
+                                    clearInterval(that.timer);
+                                    that.status = '0';
+                                    that.handleSearch();
+                                    that.$emit('on-action', 2);
+                                }
+                            }
+                        },
+                        error: function () {
+                            that.polling_flag = false;
+                        }
+                    })
+                }, 1000)
+            },
+            // 轮询上传
+            handleUploadPolling: function () {
+                var that = this;
+                // 防止多个轮询
+                if (this.upload_timer) return;
+                var count = 600; // 最多轮询600次数 大概10分钟
+                this.upload_timer = setInterval(function () {
+                    if (count-- <= 0) {
+                        clearInterval(that.upload_timer);
+                        return;
+                    }
+                    if (that.upload_polling_flag) return;
+                    that.upload_polling_flag = true;
+                    that.$ajax({
+                        action: '/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=1',
+                        method: 'get',
+                        success: function (res) {
+                            that.upload_polling_flag = false;
+                            if (res.code === 0) {
+                                that.upload_res = res.data;
+                                that.$emit('uploadingRes', res.data);
+                                if (res.data.isFinish === 1) {
+                                    clearInterval(that.upload_timer);
+                                    // that.upload_status = '0';
+                                    that.handleSearch();
+                                    that.$emit('uploadFinish', 2);
+                                }
+                            }
+                        },
+                        error: function () {
+                            that.upload_polling_flag = false;
+                        }
+                    })
+                }, 1000)
+            },
+
+        },
+        mounted: function () {
+            if (this.type === 1) {
+                this.handleSearch();
+            }
+        },
+        beforeDestory: function () {
+            clearInterval(this.timer);
+        }
+    }
+    var ModalWrap = {
+        template: '#modal_wrap',
+        components: {
+            ModalList: ModalList
+        },
+        props: {
+            importRes: {
+                type: Object,
+                default: function () {
+                    return {}
+                }
+            }
+        },
+        data: function () {
+            return {
+                active: 1, // 激活的tab 1：导入列表 2：发送列表
+                send_flag: false, // 是否已经开始发送
+                over_flag: false, // 是否已经发送结束
+                send_res: {}, // 发送情况
+                upload_flag: 0, // 开始上传状态  0未上传  1上传中  2上传完毕
+                upload_res: {}, // 上传情况
+            }
+        },
+        methods: {
+            sendAction: function (type, res) {
+                // type 1轮询到结果(发送还在进行) 2发送结束
+                if (type === 1) {
+                    this.send_res = res;
+                } else if (type === 2) {
+                    this.over_flag = true;
+                    this.active = 2;
+                }
+            },
+            handleSend: function () {
+                if (this.send_flag) return;
+                this.send_flag = true;
+                var that = this;
+                var data = new FormData();
+                data.append('codeNumber', this.importRes.codeNumber);
+                this.$ajax({
+                    action: '/message/batch/confirmSend',
+                    method: 'post',
+                    data: data,
+                    config: {
+                        timeout: 10000
+                    },
+                    success: function (res) {
+                        if (res.code === 0) {
+                            that.send_flag = true;
+                            that.$refs.send.handlePolling();
+                            that.active = 2;
+
+                        } else {
+                            that.send_flag = false;
+                            alert(res.message);
+                        }
+                    },
+                    error: function (err) {
+                        that.send_flag = false;
+                        console.log(err);
+                    },
+                    timeout: function (e) {
+                        that.send_flag = true;
+                    }
+                })
+                setTimeout(function () {
+                    that.send_flag = true;
+                    that.$refs.send.handlePolling();
+                }, 10000)
+            },
+            changeUploadFlag: function (num) {
+                this.upload_flag = num;
+            },
+            changeUploadingRes: function (res) {
+                this.upload_res = res;
+            },
+            handleClose: function () {
+                this.$emit('on-cancel');
+            }
+        },
+        mounted: function () {
+
+        }
+    }
+
+    new Vue({
+        template: '#cont_temp',
+        components: {
+            Page: Page,
+            ModalWrap: ModalWrap
+        },
+        data: function () {
+            return {
+                num_file: null, // 当前准备上传的号码文件
+                uploading: false, // 是否正在上传
+                temp_type: [{ value: 1,label:'模板1(学生学号)'}, { value: 2, label:'模板2(教师工号)'},{ value : 0, label :'模板3(手机号)'}], // 模板类型
+                temp_type_value : '', //2020-11-09新增 模板类
+                // import_res:{codeNumber: "20200708160837", totalSum: 36, successSum: 36, failureSum: 0}, // 导入文件响应数据
+                import_res: {}, // 导入文件响应数据
+                search: {
+                    codeNumber: '', // 批次号
+                    status: '0', // 发送状态
+                },
+                search_copy: {},
+                total: 0, // 总条目数
+                page: 1, // 当前页码
+                page_size: 10, // 每页条数
+                rows: [], // 列表数据
+                scroll_flag: false, // 是否有滚动条
+                modal_flag: false, // 是否显示弹窗
+                row_id: '', // 当前点击的行
+            }
+        },
+        methods: {
+            // 弹窗关闭
+            modalCancel: function () {
+                this.modal_flag = false;
+                document.body.className = '';
+            },
+            // 监听上传文件
+            fileChange: function (e) {
+                var file = e.target.files[0];
+                if (file) {
+                    if (this.num_file != file) this.num_file = file;
+                } else {
+                    file = null;
+                }
+            },
+            // 类型变化
+            typeChange: function (e) {
+                // this.temp_type = e.target.value;
+                this.temp_type_value = e;
+            },
+            // 确认上传
+            confirmImport: function () {
+                var that = this;
+                var data = new FormData();
+                data.append('upfile', this.num_file);
+                data.append('userType', Number(this.temp_type_value)); //2020-11-09修改temp_type为 temp_type_value
+                this.uploading = true;
+                this.$ajax({
+                    action: '/message/batch/upload',
+                    method: 'post',
+                    data: data,
+                    success: function (res) {
+                        that.uploading = false;
+                        if (res.code === 0) {
+                            that.import_res = res.data;
+                            console.log(res.data)
+                            document.body.className = 'overhide';
+                            that.modal_flag = true;
+                            that.$refs.m_wrap.$refs.upload.handleUploadPolling()
+                            that.$refs.m_wrap.$refs.upload.upload_total = res.data.totalSum
+                            that.$refs.m_wrap.changeUploadFlag(1)
+                        } else {
+                            alert(res.message);
+                        }
+                    },
+                    error: function () {
+                        that.uploading = false;
+                        console.log('文件导入失败');
+                    }
+                })
+            },
+
+            // 获取列表数据
+            getList: function () {
+                var that = this;
+                var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size];
+                for (var key in this.search_copy) {
+                    arr.push(key + '=' + this.search_copy[key]);
+                }
+                this.$ajax({
+                    action: '/message/batch/inputList/?' + arr.join('&'),
+                    method: 'get',
+                    success: function (res) {
+                        if (that.total !== res.total) that.total = res.total;
+                        for (var i = 0; i < res.rows.length; i++) {
+                            var row = res.rows[i];
+                            for (var key in row) {
+                                if (key === 'userId' || key === 'typeId' || key === 'name' || key === 'telephone') {
+                                    if (!row[key]) row[key] = '--';
+                                } else if (key === 'status') {
+                                    if (row[key] == 1) {
+                                        row[key] = '上传成功';
+                                    } else if (row[key] == 2) {
+                                        row[key] = '上传失败';
+                                    } else if (row[key] == 3) {
+                                        row[key] = '发送成功';
+                                    } else if (row[key] == 4) {
+                                        row[key] = '发送失败';
+                                    } else {
+                                        row[key] = '状态异常';
+                                    }
+                                }
+                            }
+                        }
+                        that.rows = res.rows;
+                        that.$nextTick(function () {
+                            that.validScroll(that.$refs.list_body);
+                        })
+                    },
+                    error: function () {
+                        console.log('列表获取失败1');
+                    }
+                })
+            },
+            // 跳页
+            pageChange: function (num, size) {
+                this.page = num;
+                if (size !== undefined) this.page_size = size;
+                this.getList();
+            },
+            // 点击搜索
+            handleSearch: function () {
+                var obj = {};
+                for (var key in this.search) {
+                    if (this.search[key]) {
+                        obj[key] = this.search[key];
+                    }
+                }
+                this.search_copy = obj;
+                this.pageChange(1);
+            },
+            // 判断是否有滚动条
+            validScroll: function (target) {
+                if (!target) {
+                    this.scroll_flag = false;
+                    return;
+                }
+                if (target.scrollHeight > target.offsetHeight) {
+                    this.scroll_flag = true;
+                } else {
+                    this.scroll_flag = false;
+                }
+            }
+        },
+        mounted: function () {
+            // console.log('this.$refs.select_temp的值',this.$refs.select_temp.options)
+            // this.$refs.select_temp.options.forEach(item => {
+            //     console.log(item.value)
+            //     // this.temp_type = item.value;
+            // })
+            // console.log(this.temp_type)
+            // that.$refs.select_temp.options.forEach(item => {
+            //     that.temp_type = item.value
+            // })
+            // this.temp_type = this.$refs.select_temp.options.value;
+            // this.handleSearch();
+        }
+    }).$mount('#app')
+
+</script>
+</body>
+</html>
