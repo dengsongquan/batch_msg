@@ -3,30 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>批量发送短信(szy)</title>
-<!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
-    <link rel="stylesheet" href="/message/css/element-ui_lib_theme-chalk_index.css"/>
-<!--    <script src="/message/js/element-ui_lib_index.js"></script>-->
-<!--    <link rel="stylesheet" href="/message/css/element-ui_lib_theme-chalk_index.css">-->
+    <link rel="stylesheet" type="text/css" href="/message/css/element-ui_lib_theme-chalk_index.css" media="all"/>
+
+<!--    <link href="../src/css/element-ui_lib_theme-chalk_index.css">-->
+
+    <script type="text/javascript" src="/message/js/vue.js"></script>
+    <!-- 必须在vue后引入 -->
+    <script src="/message/js/element-ui_lib_index.js"></script>
+
+    <script type="text/javascript" src="/message/js/ajax.js"></script>
+    <!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
     <style>
-        .title{
+        .title {
             margin: 0;
             padding: 0;
             font-size: 17px;
             font-weight: 700;
-            color: rgba(0,0,0,.85);
+            color: rgba(0, 0, 0, .85);
         }
+
         body {
             margin: 0;
             padding: 0 20px;
             font-size: 15px;
         }
-        .part1{
+
+        .part1 {
             display: flex;
             flex-direction: row;
             align-items: center;
             background: white;
             padding: 18px 0 18px 30px;
         }
+
         ul {
             padding: 0;
         }
@@ -47,10 +56,11 @@
             padding-top: 10px;
             margin-left: 20px;
         }
-        .download{
+
+        .download {
             height: 40px;
             padding: 0 0;
-            background-color: rgba(0,0,0,.02);
+            background-color: rgba(0, 0, 0, .02);
             border-bottom: 1px solid #e6eaee;
             align-items: center;
         }
@@ -99,13 +109,23 @@
         }
 
         .import_file .temp_box .btn {
-            //padding: 3px 12px 4px 12px;
-            //margin-left: 15px;
+        //padding: 3px 12px 4px 12px; //margin-left: 15px;
         }
 
         .history_list form {
             display: flex;
             align-items: center
+        }
+
+        .history_list {
+            background-color: rgba(0, 0, 0, .02);
+            align-items: center;
+        }
+        .history_list .title{
+            margin-top: 15px;
+            margin-bottom: 8px;
+            padding-top: 10px;
+            margin-left: 20px;
         }
 
         .history_list .form_item + .form_item {
@@ -597,17 +617,13 @@
     </style>
 </head>
 <body style="background: #f2f5f8 !important;">
-<div id="app" class="app" ></div>
+<div id="app" class="app"></div>
 
-<script type="text/javascript" src="/message/js/vue.js"></script>
-<!-- 必须在vue后引入 -->
-<script src="/message/js/element-ui_lib_index.js"></script>
-<script type="text/javascript" src="/message/js/ajax.js"></script>
 <!--main-->
 <script type="x-template" id="cont_temp">
-    <div class="cont_wrap" >
+    <div class="cont_wrap">
         <!--批量发送短信-->
-        <div class="download" >
+        <div class="download">
             <h3 class="title">批量发送短信</h3>
             <div class="part1">
                 <ul class="download_list">
@@ -633,46 +649,53 @@
         <!--导入文件-->
         <div class="history_list" style="margin-top: 150px;">
             <h3 class="title">导入文件</h3>
-           <div class="temp_box part1">
-               <input type="file" @change="fileChange"
-                      accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
-               <label>模板类型：</label>
-               <el-select v-model="temp_type_value" ref="select_temp" @change="typeChange">
-                   <el-option
-                    v-for="item in temp_type"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                   >
-                   </el-option>
-               </el-select>
-<!--                <select ref="select_temp" @change="typeChange">-->
-<!--                    <option value="1" selected>模板1(学生学号)</option>-->
-<!--                    <option value="2">模板2(教师工号)</option>-->
-<!--                    <option value="0">模板3(手机号)</option>-->
-<!--                </select>-->
-                <el-button v-if="num_file && !uploading" plain @click="confirmImport">确认导入</el-button>
-                <el-button plain v-else disabled>确认导入</el-button>
+            <div class="temp_box part1">
+                <input type="file" @change="fileChange"
+                       accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                <label style="margin-left: 75px;">模板类型：</label>
+                <el-select v-model="temp_type_value" ref="select_temp" @change="typeChange">
+                    <el-option
+                            v-for="item in temp_type"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+                <!--                <select ref="select_temp" @change="typeChange">-->
+                <!--                    <option value="1" selected>模板1(学生学号)</option>-->
+                <!--                    <option value="2">模板2(教师工号)</option>-->
+                <!--                    <option value="0">模板3(手机号)</option>-->
+                <!--                </select>-->
+                <el-button v-if="num_file && !uploading" type="primary" @click="confirmImport">确认导入</el-button>
+                <el-button type="primary" v-else disabled>确认导入</el-button>
             </div>
         </div>
 
         <!--列表搜索-->
         <div class="history_list">
-            <h3>历史列表</h3>
-            <form id="search_history_form" style="" enctype="multipart/form-data" action="">
+            <h3 class="title">历史列表</h3>
+            <form id="search_history_form" class="part1" enctype="multipart/form-data" action="">
                 <div class="form_item">
                     <label>批次号：</label>
-                    <input style="width: 250px" placeholder="批次号" type="text" v-model="search.codeNumber"/>
+                    <el-input style="width: 250px" placeholder="请输入批次号" v-model="search.codeNumber"/>
                 </div>
                 <div class="form_item">
                     <label>发送状态：</label>
-                    <select v-model="search.status">
-                        <option value="0">全部</option>
-                        <option value="1">上传成功</option>
-                        <option value="2">上传失败</option>
-                        <option value="3">发送成功</option>
-                        <option value="4">发送失败</option>
-                    </select>
+                    <el-select v-model="searchStatus" id="elSelect">
+<!--                    <el-select v-model="search.status">-->
+                        <el-option
+                            v-for="item in search.status"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+<!--                        <option value="0">全部</option>-->
+<!--                        <option value="1">上传成功</option>-->
+<!--                        <option value="2">上传失败</option>-->
+<!--                        <option value="3">发送成功</option>-->
+<!--                        <option value="4">发送失败</option>-->
+                    </el-select>
                 </div>
                 <el-button type="primary" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" @click="getList">刷新</el-button>
@@ -681,7 +704,7 @@
 
         <!--历史列表-->
         <div class="list_wrap">
-            <div class="list_box">
+            <div class="list_box" >
                 <ul class="list_head col_box" :class="{pr17:scroll_flag}">
                     <li class="col1">工号/学号</li>
                     <li class="col2">类型</li>
@@ -697,31 +720,31 @@
                     <li v-for="item in rows" :key="item.id" class="list_tr col_box" :class="{info:row_id==item.id}"
                         @click="row_id=item.id">
                         <div class="list_td col1">
-                            <div class="td_inner"><span>{{item.userId}}</span></div>
+                            <div class="td_inner"><span>{{ item.userId }}</span></div>
                         </div>
                         <div class="list_td col2">
-                            <div class="td_inner"><span>{{item.typeId}}</span></div>
+                            <div class="td_inner"><span>{{ item.typeId }}</span></div>
                         </div>
                         <div class="list_td col3">
-                            <div class="td_inner"><span>{{item.name}}</span></div>
+                            <div class="td_inner"><span>{{ item.name }}</span></div>
                         </div>
                         <div class="list_td col4">
-                            <div class="td_inner"><span>{{item.message}}</span></div>
+                            <div class="td_inner"><span>{{ item.message }}</span></div>
                         </div>
                         <div class="list_td col5">
-                            <div class="td_inner"><span>{{item.telephone}}</span></div>
+                            <div class="td_inner"><span>{{ item.telephone }}</span></div>
                         </div>
                         <div class="list_td col6">
-                            <div class="td_inner"><span>{{item.codeNumber}}</span></div>
+                            <div class="td_inner"><span>{{ item.codeNumber }}</span></div>
                         </div>
                         <div class="list_td col7">
-                            <div class="td_inner"><span>{{item.status}}</span></div>
+                            <div class="td_inner"><span>{{ item.status }}</span></div>
                         </div>
                         <div class="list_td col8">
-                            <div class="td_inner"><span>{{item.resultMessage}}</span></div>
+                            <div class="td_inner"><span>{{ item.resultMessage }}</span></div>
                         </div>
                         <div class="list_td col9">
-                            <div class="td_inner"><span>{{item.createAt}}</span></div>
+                            <div class="td_inner"><span>{{ item.createAt }}</span></div>
                         </div>
                     </li>
                 </ul>
@@ -740,16 +763,16 @@
 <script type="x-template" id="modal_list">
     <div class="modal_list">
         <ul class="list_msg">
-            <li class="li1"><span class="sp1">批次号：</span><span class="sp2">{{importRes.codeNumber}}</span></li>
+            <li class="li1"><span class="sp1">批次号：</span><span class="sp2">{{ importRes.codeNumber }}</span></li>
             <template v-if="type==1">
-                <li><span class="sp1">总数：</span><span class="sp2">{{upload_total}}</span></li>
-                <li><span class="sp1">成功：</span><span class="sp2">{{upload_res.successSum}}</span></li>
-                <li><span class="sp1">失败：</span><span class="sp2">{{upload_res.failureSum}}</span></li>
+                <li><span class="sp1">总数：</span><span class="sp2">{{ upload_total }}</span></li>
+                <li><span class="sp1">成功：</span><span class="sp2">{{ upload_res.successSum }}</span></li>
+                <li><span class="sp1">失败：</span><span class="sp2">{{ upload_res.failureSum }}</span></li>
             </template>
             <template v-else>
-                <li><span class="sp1">总数：</span><span class="sp2">{{send_res.totalSum}}</span></li>
-                <li><span class="sp1">成功：</span><span class="sp2">{{send_res.successSum}}</span></li>
-                <li><span class="sp1">失败：</span><span class="sp2">{{send_res.failureSum}}</span></li>
+                <li><span class="sp1">总数：</span><span class="sp2">{{ send_res.totalSum }}</span></li>
+                <li><span class="sp1">成功：</span><span class="sp2">{{ send_res.successSum }}</span></li>
+                <li><span class="sp1">失败：</span><span class="sp2">{{ send_res.failureSum }}</span></li>
             </template>
         </ul>
         <div class="search">
@@ -779,22 +802,22 @@
                 <ul v-if="rows.length>0" class="list_body2" ref="list_body2">
                     <li v-for="item in rows" :key="item.id" class="list_tr col_box">
                         <div class="list_td col1">
-                            <div class="td_inner"><span>{{item.name}}</span></div>
+                            <div class="td_inner"><span>{{ item.name }}</span></div>
                         </div>
                         <div class="list_td col2">
-                            <div class="td_inner"><span>{{item.userId}}</span></div>
+                            <div class="td_inner"><span>{{ item.userId }}</span></div>
                         </div>
                         <div class="list_td col3">
-                            <div class="td_inner"><span>{{item.telephone}}</span></div>
+                            <div class="td_inner"><span>{{ item.telephone }}</span></div>
                         </div>
                         <div class="list_td col4">
-                            <div class="td_inner"><span>{{item.message}}</span></div>
+                            <div class="td_inner"><span>{{ item.message }}</span></div>
                         </div>
                         <div class="list_td col5">
-                            <div class="td_inner"><span>{{item.status}}</span></div>
+                            <div class="td_inner"><span>{{ item.status }}</span></div>
                         </div>
                         <div class="list_td col6">
-                            <div class="td_inner"><span>{{item.resultMessage}}</span></div>
+                            <div class="td_inner"><span>{{ item.resultMessage }}</span></div>
                         </div>
                     </li>
                 </ul>
@@ -810,8 +833,8 @@
             <div class="modal_cont">
                 <div class="tab_wrap">
                     <div class="tab">
-                        <button type="button" :class="{active:active==1}" @click="active=1">导入列表</button>
-                        <button type="button" :class="{active:active==2}" @click="active=2">发送列表</button>
+                        <el-button type="primary" :class="{active:active==1}" @click="active=1">导入列表</el-button>
+                        <el-button plain :class="{active:active==2}" @click="active=2">发送列表</el-button>
                     </div>
                     <button type="button" class="close" @click="handleClose">×</button>
                 </div>
@@ -830,21 +853,22 @@
 
                         <span v-if="send_flag" class="msg l">
                             正在发送短信(
-                            总数：{{send_res.totalSum}}，
-                            成功：{{send_res.successSum}}，
-                            失败：{{send_res.failureSum}})
+                            总数：{{ send_res.totalSum }}，
+                            成功：{{ send_res.successSum }}，
+                            失败：{{ send_res.failureSum }})
                         </span>
                         <span v-else-if="upload_flag===1" class="msg l">
                             正在上传文件(
-                            总数：{{upload_res.totalSum}}，
-                            成功：{{upload_res.successSum}}，
-                            失败：{{upload_res.failureSum}})
+                            总数：{{ upload_res.totalSum }}，
+                            成功：{{ upload_res.successSum }}，
+                            失败：{{ upload_res.failureSum }})
                         </span>
-                        <button v-else type="button" class="btn btn-default l" @click="handleSend">确认发送</button>
+<!--                        class="btn btn-default l"-->
+                        <el-button v-else type="primary" @click="handleSend">确认发送</el-button>
                     </template>
 
 
-                    <el-button type="primary" @click="handleClose">返回</el-button>
+<!--                    <el-button type="primary" @click="handleClose">返回</el-button>-->
                 </div>
             </div>
         </div>
@@ -855,16 +879,16 @@
     <div class="page_temp">
         <div v-if="c_total>=1" class="page_box">
             <div class="l">
-                显示第 {{start}} 到第 {{end}} 条记录，总共 {{c_total}} 条记录每页显示
+                显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ c_total }} 条记录每页显示
                 <select :value="page_size" @change="countChange">
-                    <option v-for="item in page_size_all" :key="item" :value="item">{{item}}</option>
+                    <option v-for="item in page_size_all" :key="item" :value="item">{{ item }}</option>
                 </select>
                 条记录
             </div>
             <ul class="r">
                 <li class="prev" @click="pageChange('prev')">‹</li>
                 <li v-for="item in page_list" :key="item.k" @click="pageChange(item.v)" :class="{active:page===item.v}">
-                    {{item.v}}
+                    {{ item.v }}
                 </li>
                 <li class="next" @click="pageChange('next')">›</li>
             </ul>
@@ -875,7 +899,7 @@
 <script type="x-template" id="vtips">
     <transition name="vtips">
         <div v-show="show" class="vtips">
-            <div class="content">{{msg}}</div>
+            <div class="content">{{ msg }}</div>
         </div>
     </transition>
 </script>
@@ -1359,14 +1383,18 @@
             return {
                 num_file: null, // 当前准备上传的号码文件
                 uploading: false, // 是否正在上传
-                temp_type: [{ value: 1,label:'模板1(学生学号)'}, { value: 2, label:'模板2(教师工号)'},{ value : 0, label :'模板3(手机号)'}], // 模板类型
-                temp_type_value : '', //2020-11-09新增 模板类
+                temp_type: [{value: 1, label: '模板1(学生学号)'}, {value: 2, label: '模板2(教师工号)'}, {
+                    value: 0,
+                    label: '模板3(手机号)'
+                }], // 模板类型
+                temp_type_value: '', //2020-11-09新增 模板类
                 // import_res:{codeNumber: "20200708160837", totalSum: 36, successSum: 36, failureSum: 0}, // 导入文件响应数据
                 import_res: {}, // 导入文件响应数据
                 search: {
                     codeNumber: '', // 批次号
-                    status: '0', // 发送状态
+                    status: [{value:'0',label:'全部'},{value : '1',label:'上传成功'},{value : '2',label:'上传失败'},{value : '3',label:'发送成功'},{value : '4',label:'发送失败'}], // 发送状态
                 },
+                searchStatus:'0', //2020-11-10新增上传类型 Dengxiaohang
                 search_copy: {},
                 total: 0, // 总条目数
                 page: 1, // 当前页码
@@ -1434,6 +1462,7 @@
                 var that = this;
                 var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size];
                 for (var key in this.search_copy) {
+                    console.log('search_copy的值', this.search_copy[key])
                     arr.push(key + '=' + this.search_copy[key]);
                 }
                 this.$ajax({
@@ -1480,11 +1509,28 @@
             // 点击搜索
             handleSearch: function () {
                 var obj = {};
+                let codeNumber = '';
+                let status = '';
                 for (var key in this.search) {
-                    if (this.search[key]) {
-                        obj[key] = this.search[key];
+                    let value = this.search[key];
+                    if (value) {
+                        // if (key === 'status'){
+                        // value.forEach(item => {
+                        status = this.searchStatus
+                        codeNumber = this.search.codeNumber;
+                        // codeNumber = this.search[key];
+                        // })
                     }
+                        // else if (key === 'codeNumber'){
+                        //     codeNumber = this.search[key];
+                        // }
+                        // for (let i =0; i < value.length;++i){
+                        //     status = value[i].value
+                        // }
+                        // obj[key] = this.search[key];
+                    obj = {codeNumber:codeNumber,status: status}
                 }
+                console.log('obj的值', obj)
                 this.search_copy = obj;
                 this.pageChange(1);
             },
