@@ -183,7 +183,7 @@
         }
 
         .page_box .r li.active {
-            color: #fff;
+            color: black !important;
             background-color: #337ab7;
             border-color: #337ab7;
         }
@@ -372,7 +372,7 @@
 
         .tab_wrap .tab button.active {
             font-weight: bold;
-            color: #449d44;
+            color: black;
         }
 
         .tab_wrap .tab button.active::after {
@@ -787,7 +787,7 @@
                     <option value="4">发送失败</option>
                 </template>
             </select>
-            <el-button type="button" class="btn btn-default" @click="handleSearch">搜索</el-button>
+            <el-button type="primary" class="btn btn-default" @click="handleSearch">搜索</el-button>
         </div>
         <div class="list_wrap2">
             <div class="list_box2">
@@ -833,7 +833,7 @@
             <div class="modal_cont">
                 <div class="tab_wrap">
                     <div class="tab">
-                        <el-button type="primary" :class="{active:active==1}" @click="active=1">导入列表</el-button>
+                        <el-button type="primary" style="color: black;" :class="{active:active==1}" @click="active=1">导入列表</el-button>
                         <el-button plain :class="{active:active==2}" @click="active=2">发送列表</el-button>
                     </div>
                     <button type="button" class="close" @click="handleClose">×</button>
@@ -1530,7 +1530,6 @@
                         // obj[key] = this.search[key];
                     obj = {codeNumber:codeNumber,status: status}
                 }
-                console.log('obj的值', obj)
                 this.search_copy = obj;
                 this.pageChange(1);
             },
