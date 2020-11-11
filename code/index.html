@@ -14,6 +14,9 @@
     <script type="text/javascript" src="/message/js/ajax.js"></script>
     <!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
     <style>
+        .el-button{
+            padding: 7px 14px;
+        }
         .title {
             margin: 0;
             padding: 0;
@@ -415,12 +418,12 @@
             width: 150px;
         }
 
-        .modal_list .search {
-            display: flex;
+         .search {
+            //display: flex;
             margin-top: 10px;
         }
 
-        .modal_list .search .btn {
+         .search .btn {
             padding: 3px 12px 4px 12px;
             margin-left: 15px;
         }
@@ -776,19 +779,37 @@
             </template>
         </ul>
         <div class="search">
-            <select v-model="status">
-                <option value="0">全部</option>
+            <el-select v-model="status">
                 <template v-if="type==1">
-                    <option value="1">上传成功</option>
-                    <option value="2">上传失败</option>
+                    <el-option
+                     v-for="item in uploadStatus"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value"
+                    >
+                    </el-option>
                 </template>
                 <template v-else>
-                    <option value="3">发送成功</option>
-                    <option value="4">发送失败</option>
+                    <el-option
+                       v-for="item in sendStatus"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"
+                    ></el-option>
                 </template>
-            </select>
-            <el-button type="primary" class="btn btn-default" @click="handleSearch">搜索</el-button>
+<!--                <option value="0">全部</option>-->
+<!--                <template v-if="type==1">-->
+<!--                    <option value="1">上传成功</option>-->
+<!--                    <option value="2">上传失败</option>-->
+<!--                </template>-->
+<!--                <template v-else>-->
+<!--                    <option value="3">发送成功</option>-->
+<!--                    <option value="4">发送失败</option>-->
+<!--                </template>-->
+            </el-select>
+            <el-button type="primary" class="btn l"  @click="handleSearch">搜索</el-button>
         </div>
+
         <div class="list_wrap2">
             <div class="list_box2">
                 <ul class="list_head2 col_box" :class="{pr17:scroll_flag}">
@@ -864,7 +885,7 @@
                             失败：{{ upload_res.failureSum }})
                         </span>
 <!--                        class="btn btn-default l"-->
-                        <el-button v-else type="primary" @click="handleSend">确认发送</el-button>
+                        <el-button v-else type="primary" class="btn l" style="padding: 3px 12px 4px 12px;" @click="handleSend">确认发送</el-button>
                     </template>
 
 
@@ -1124,6 +1145,8 @@
         data: function () {
             return {
                 status: '0', // 发送状态
+                uploadStatus:[{value:'0',label:'全部'},{value:'1',label:'上传成功'},{value:'2',label: '上传失败'}],
+                sendStatus: [{value:'0',label:'全部'},{value:'3',label:'发送成功'},{value: '4', label: '发送失败'}],
                 status_copy: '0',
                 total: 0, // 总条目数
                 page: 1, // 当前页码
@@ -1523,9 +1546,6 @@
                     }
                         // else if (key === 'codeNumber'){
                         //     codeNumber = this.search[key];
-                        // }
-                        // for (let i =0; i < value.length;++i){
-                        //     status = value[i].value
                         // }
                         // obj[key] = this.search[key];
                     obj = {codeNumber:codeNumber,status: status}
