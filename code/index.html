@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>批量发送短信(szy)</title>
-    <link rel="stylesheet" type="text/css" href="/message/css/element-ui_lib_theme-chalk_index.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/test/message/css/element-ui_lib_theme-chalk_index.css" media="all"/>
 
 <!--    <link href="../src/css/element-ui_lib_theme-chalk_index.css">-->
 
-    <script type="text/javascript" src="/message/js/vue.js"></script>
+    <script type="text/javascript" src="/test/message/js/vue.js"></script>
     <!-- 必须在vue后引入 -->
-    <script src="/message/js/element-ui_lib_index.js"></script>
+    <script src="/test/message/js/element-ui_lib_index.js"></script>
 
-    <script type="text/javascript" src="/message/js/ajax.js"></script>
+    <script type="text/javascript" src="/test/message/js/ajax.js"></script>
     <!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
     <style>
         .el-button{
@@ -848,8 +848,9 @@
         <Page :total="total" :current="page" @pageChange="pageChange"></Page>
     </div>
 </script>
+
 <script type="x-template" id="modal_wrap">
-    <div class="modal_wrap">
+    <div class="modal_wrap" >
         <div class="modal_box">
             <div class="modal_cont">
                 <div class="tab_wrap">
@@ -887,7 +888,6 @@
 <!--                        class="btn btn-default l"-->
                         <el-button v-else type="primary" class="btn l" style="padding: 3px 12px 4px 12px;" @click="handleSend">确认发送</el-button>
                     </template>
-
 
 <!--                    <el-button type="primary" @click="handleClose">返回</el-button>-->
                 </div>
@@ -1170,8 +1170,8 @@
             getList: function () {
                 var that = this;
                 var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size, 'status=' + this.status_copy, 'codeNumber=' + this.importRes.codeNumber];
-                var url = '/message/batch/inputList/'
-                if (this.type === 2) url = '/message/batch/results'
+                var url = '/test/message/batch/inputList/'
+                if (this.type === 2) url = '/test/message/batch/results'
                 this.$ajax({
                     action: url + '?' + arr.join('&'),
                     method: 'get',
@@ -1244,7 +1244,7 @@
                     if (that.polling_flag) return;
                     that.polling_flag = true;
                     that.$ajax({
-                        action: '/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=2',
+                        action: '/test/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=2',
                         method: 'get',
                         success: function (res) {
                             that.polling_flag = false;
@@ -1279,7 +1279,7 @@
                     if (that.upload_polling_flag) return;
                     that.upload_polling_flag = true;
                     that.$ajax({
-                        action: '/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=1',
+                        action: '/test/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=1',
                         method: 'get',
                         success: function (res) {
                             that.upload_polling_flag = false;
@@ -1351,7 +1351,7 @@
                 var data = new FormData();
                 data.append('codeNumber', this.importRes.codeNumber);
                 this.$ajax({
-                    action: '/message/batch/confirmSend',
+                    action: '/test/message/batch/confirmSend',
                     method: 'post',
                     data: data,
                     config: {
@@ -1426,13 +1426,29 @@
                 scroll_flag: false, // 是否有滚动条
                 modal_flag: false, // 是否显示弹窗
                 row_id: '', // 当前点击的行
+                update : true,
             }
         },
         methods: {
+            //刷新功能
+            reload(){
+                this.update = false
+                this.$nextTick(() => {
+                    this.update = true
+                })
+            },
             // 弹窗关闭
             modalCancel: function () {
+                var that = this;
                 this.modal_flag = false;
                 document.body.className = '';
+                history.go(0)
+                // return new Promise(function (resolve,reject){
+                //     setTimeout(function (){
+                //         resolve(history.go(0))
+                //     })
+                // }).then(that.getList)
+                // this.getList();
             },
             // 监听上传文件
             fileChange: function (e) {
@@ -1456,14 +1472,14 @@
                 data.append('userType', Number(this.temp_type_value)); //2020-11-09修改temp_type为 temp_type_value
                 this.uploading = true;
                 this.$ajax({
-                    action: '/message/batch/upload',
+                    action: '/test/message/batch/upload',
                     method: 'post',
                     data: data,
                     success: function (res) {
                         that.uploading = false;
                         if (res.code === 0) {
                             that.import_res = res.data;
-                            console.log(res.data)
+                            console.log('res.data的值',res.data)
                             document.body.className = 'overhide';
                             that.modal_flag = true;
                             that.$refs.m_wrap.$refs.upload.handleUploadPolling()
@@ -1485,11 +1501,10 @@
                 var that = this;
                 var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size];
                 for (var key in this.search_copy) {
-                    console.log('search_copy的值', this.search_copy[key])
                     arr.push(key + '=' + this.search_copy[key]);
                 }
                 this.$ajax({
-                    action: '/message/batch/inputList/?' + arr.join('&'),
+                    action: '/test/message/batch/inputList/?' + arr.join('&'),
                     method: 'get',
                     success: function (res) {
                         if (that.total !== res.total) that.total = res.total;
