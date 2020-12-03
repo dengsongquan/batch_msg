@@ -13,6 +13,7 @@
     <script src="/test/message/js/element-ui_lib_index.js"></script>
 
     <script type="text/javascript" src="/test/message/js/ajax.js"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="">
     <!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
     <style>
         .el-button{
@@ -31,7 +32,6 @@
             padding: 0 20px;
             font-size: 15px;
         }
-
         .part1 {
             display: flex;
             flex-direction: row;
@@ -197,7 +197,8 @@
             border-radius: 4px;
             margin-top: 10px;
             width: 100%;
-            overflow-x: auto;
+            overflow: scroll;
+            //overflow-x: auto;
         }
 
         .list_box {
@@ -662,8 +663,7 @@
                             v-for="item in temp_type"
                             :key="item.value"
                             :label="item.label"
-                            :value="item.value"
-                    >
+                            :value="item.value">
                     </el-option>
                 </el-select>
                 <!--                <select ref="select_temp" @change="typeChange">-->
@@ -701,9 +701,44 @@
 <!--                        <option value="4">发送失败</option>-->
                     </el-select>
                 </div>
+                <div class="form_item" style="margin-left: 45px;">
+                    <label >本用户发送记录</label>
+                    <el-checkbox v-model="radio" style="margin-left: 15px;">否</el-checkbox>
+                </div>
+
+
                 <el-button type="primary" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" @click="getList">刷新</el-button>
             </form>
+
+            <form action="" class="part1" enctype="multipart/form-data">
+                <div class="form_item" >
+                    <label>姓名：</label>
+                    <el-input style="width: 250px;margin-left: 15px;" placeholder="请输入姓名" v-model="username"></el-input>
+                </div>
+                <div class="form_item">
+                    <label>短信内容：</label>
+                    <el-input style="width: 250px;" placeholder="请输入短信内容" v-model="messages"></el-input>
+                </div>
+
+                <div class="form_item">
+                    <label>手机号：</label>
+                    <el-input style="width: 250px;" placeholder="请输入手机号" v-model="telphone"></el-input>
+                </div>
+            </form>
+            <form class="part1" enctype="multipart/form-data">
+                <div class="form_item">
+                    <label>开始日期：</label>
+                    <el-date-picker v-model="dateTime" :picker-options="startTime" type="datetime" placeholder="请选择日期">
+                    </el-date-picker>
+                </div>
+                <div class="form_item" >
+                    <label style="margin-left: 15px !important;">结束日期：</label>
+                    <el-date-picker  v-model="dateEnd" :picker-options="endTime" type="datetime" placeholder="请选择日期">
+                    </el-date-picker>
+                </div>
+            </form>
+
         </div>
 
         <!--历史列表-->
@@ -757,7 +792,10 @@
                 </div>
             </div>
         </div>
-        <Page :total="total" :current="page" @pageChange="pageChange"></Page>
+
+        <Page :total="total" :current="page" @pageChange="pageChange">
+
+        </Page>
 
         <!--本次导入的列表 弹窗-->
         <ModalWrap ref="m_wrap" v-show="modal_flag" :import-res="import_res" @on-cancel="modalCancel"></ModalWrap>
@@ -1113,7 +1151,7 @@
                 if (this.c_total !== val) {
                     this.setAll();
                 }
-                ;
+
             },
             current: function (val) {
                 if (this.page !== val) {
@@ -1419,6 +1457,7 @@
                     status: [{value:'0',label:'全部'},{value : '1',label:'上传成功'},{value : '2',label:'上传失败'},{value : '3',label:'发送成功'},{value : '4',label:'发送失败'}], // 发送状态
                 },
                 searchStatus:'0', //2020-11-10新增上传类型 Dengxiaohang
+                radio : false, //2020-12-03新增是否是自己发送
                 search_copy: {},
                 total: 0, // 总条目数
                 page: 1, // 当前页码
@@ -1428,6 +1467,37 @@
                 modal_flag: false, // 是否显示弹窗
                 row_id: '', // 当前点击的行
                 update : true,
+                username :'',//用户名
+                messages:'',//短信内容
+                telphone : '',//手机号
+                dateTime:'',//开始日期
+                dateEnd: '',//结束日期
+                startTime:{
+                    disabledDate : time => {
+                        const endDateVal = new Date(this.dateEnd).getTime()
+                        if (endDateVal){
+                            return time.getTime() > endDateVal - 0
+                        }
+                        // if (this.dateTime){
+                        //     return time.getTime() > new Date(this.dateEnd).getTime()
+                        // }else {
+                        //     return time.getTime() > Date.now();
+                        // }
+                    }
+                },
+                endTime:{
+                    disabledDate : time => {
+                        const beginDateVal = new Date(this.dateTime).getTime()
+                        if (beginDateVal){
+                            return time.getTime() < beginDateVal - 0
+                        }
+                        // if (this.dateTime){
+                        //     return time.getTime() > Date.now() || time.getTime() < new Date(this.dateTime).getTime()
+                        // }else {
+                        //     return time.getTime() > Date.now()
+                        // }
+                    }
+                }
             }
         },
         methods: {
@@ -1449,7 +1519,6 @@
                 //         resolve(history.go(0))
                 //     })
                 // }).then(that.getList)
-                // this.getList();
             },
             // 监听上传文件
             fileChange: function (e) {
@@ -1500,17 +1569,17 @@
             // 获取列表数据
             getList: function () {
                 var that = this;
-                var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size];
+                var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size ];
                 for (var key in this.search_copy) {
                     arr.push(key + '=' + this.search_copy[key]);
                 }
                 this.$ajax({
-                    action: '/test/message/batch/inputList/?' + arr.join('&'),
+                    action: '/test/message/batch/search/?' + arr.join('&'),
                     method: 'get',
                     success: function (res) {
-                        if (that.total !== res.total) that.total = res.total;
-                        for (var i = 0; i < res.rows.length; i++) {
-                            var row = res.rows[i];
+                        if (that.total !== res.data.total) that.total = res.data.total;
+                        for (var i = 0; i < res.data.rows.length; i++) {
+                            var row = res.data.rows[i];
                             for (var key in row) {
                                 if (key === 'userId' || key === 'typeId' || key === 'name' || key === 'telephone') {
                                     if (!row[key]) row[key] = '--';
@@ -1529,7 +1598,7 @@
                                 }
                             }
                         }
-                        that.rows = res.rows;
+                        that.rows = res.data.rows;
                         that.$nextTick(function () {
                             that.validScroll(that.$refs.list_body);
                         })
@@ -1550,13 +1619,29 @@
                 var obj = {};
                 let codeNumber = '';
                 let status = '';
+                let name = '';
+                let message = ''; //消息
+                let tel = this.telphone;// 手机号
+                let isOwner = this.radio; //默认为 0
+                if (isOwner == true){
+                    isOwner = 0
+                } else if (isOwner == false){
+                    isOwner = 1
+                }
+
+                let dateTime = this.dateTime //开始时间
+                let endTime = this.dateEnd //结束时间
+                dateTime = Date.parse(dateTime)
+                endTime = Date.parse(endTime)
                 for (var key in this.search) {
                     let value = this.search[key];
                     if (value) {
                         // if (key === 'status'){
                         // value.forEach(item => {
                         status = this.searchStatus
-                        codeNumber = this.search.codeNumber;
+                        // codeNumber = this.search.codeNumber;
+                        name = this.username;
+                        message = this.messages;
                         // codeNumber = this.search[key];
                         // })
                     }
@@ -1564,7 +1649,8 @@
                         //     codeNumber = this.search[key];
                         // }
                         // obj[key] = this.search[key];
-                    obj = {codeNumber:codeNumber,status: status}
+                    obj = {status : status ,name : name, message : message, telephone : tel, isOwner: isOwner, startTime : dateTime || '', endTime: endTime || ''}
+                    // obj = { codeNumber : codeNumber, status : status ,name : name}
                 }
                 this.search_copy = obj;
                 this.pageChange(1);
@@ -1583,6 +1669,7 @@
             }
         },
         mounted: function () {
+            this.getList();
             // console.log('this.$refs.select_temp的值',this.$refs.select_temp.options)
             // this.$refs.select_temp.options.forEach(item => {
             //     console.log(item.value)
