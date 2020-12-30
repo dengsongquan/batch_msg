@@ -1,0 +1,42 @@
+{
+  // 打开文件自动检测缩进
+  "editor.detectIndentation": false,
+  // tab缩进2个字符
+  "editor.tabSize": 2,
+  // vetur默认配置
+  "vetur.format.defaultFormatterOptions": {
+    "js-beautify-html": {
+      "wrap_attributes": "auto"
+    },
+    "prettyhtml": {
+      "printWidth": 100,
+      "singleQuote": false,
+      "wrapAttributes": false,
+      "sortAttributes": false
+    },
+    "prettier": {
+      "semi": true,
+      "singleQuote": true,
+      "printWidth": 200,
+      "trailingComma": "none",
+      "arrowParens": "avoid",
+      "proseWrap": "preserve"
+    }
+  },
+  // 保存自动格式化
+  "editor.formatOnSave": true,
+  // html格式化依赖 默认为none
+  "vetur.format.defaultFormatter.html": "js-beautify-html",
+  // 句末加分号
+  "prettier.semi": true,
+  // 用单引号
+  "prettier.singleQuote": true,
+  // 换行字符串阈值
+  "prettier.printWidth": 200,
+  // 最后一个对象元素加逗号
+  "prettier.trailingComma": "none",
+  // (x) => {} 是否要有小括号
+  "prettier.arrowParens": "avoid",
+  // 是否要换行
+  "prettier.proseWrap": "preserve"
+}

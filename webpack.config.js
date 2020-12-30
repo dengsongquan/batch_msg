@@ -29,7 +29,7 @@ module.exports = {
         open:false,
         hotOnly:true,
         proxy: {
-            '/message': {
+            '/test/message': {
                 target: 'http://10.99.44.150:7071', // 炼军本地message
                 changeOrigin: true,
                 // pathRewrite: {
