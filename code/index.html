@@ -18,6 +18,25 @@
         .el-button{
             padding: 7px 14px;
         }
+        .sidebar{
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 0;
+        }
+        .sidebar > ul {
+            height: 100%;
+        }
+        .sidebar-el-menu:not(.el-menu--collapse){
+            width: 200px;
+            height: 100%;
+            float: left;
+            clear: both;
+        }
         .header{
             position: relative;
             box-sizing: border-box;
@@ -25,23 +44,29 @@
             height: 70px;
             font-size: 22px;
             color: #ffffff;
+            background-color: #242f42;
         }
         .header .logo{
             float: left;
             width: 250px;
             line-height: 70px;
         }
+        .input_text{
+            position: absolute;
+            left: 200px;
+            top:70px;
+            bottom: 0;
+            right: 0;
+        }
         .title {
-            margin: 0;
-            padding: 0;
             font-size: 17px;
             font-weight: 700;
             color: rgba(0, 0, 0, .85);
+            margin-left: 20px;
         }
 
         body {
             margin: 0;
-            padding: 0 20px;
             font-size: 15px;
         }
         .part1 {
@@ -67,18 +92,18 @@
         }
 
         .download .title {
-            margin-top: 15px;
             margin-bottom: 8px;
-            padding-top: 10px;
             margin-left: 20px;
         }
 
         .download {
-            height: 40px;
-            padding: 0 0;
             background-color: rgba(0, 0, 0, .02);
+            position: absolute;
             border-bottom: 1px solid #e6eaee;
             align-items: center;
+            top: 70px;
+            left: 200px;
+            right: 0;
         }
 
         .download_list li + li {
@@ -86,7 +111,7 @@
         }
 
         .download_list .msg {
-            color: #ff0000;
+            color: #2c3e50;
             display: inline-block;
             font-size: 15px;
         }
@@ -136,7 +161,13 @@
         .history_list {
             background-color: rgba(0, 0, 0, .02);
             align-items: center;
+            position: absolute;
+            border-bottom: 1px solid #e6eaee;
+            top: 70px;
+            left: 200px;
+            right: 0;
         }
+
         .history_list .title{
             margin-top: 15px;
             margin-bottom: 8px;
@@ -161,7 +192,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
         }
 
         .page_box .l {
@@ -207,10 +237,12 @@
         .list_wrap {
             border: 1px solid #ddd;
             border-radius: 4px;
-            margin-top: 10px;
-            width: 100%;
+            top: 355px;
+            position: absolute;
+            right: 0;
+            bottom: 0;
             overflow: scroll;
-            //overflow-x: auto;
+            left: 200px;
         }
 
         .list_box {
@@ -271,8 +303,8 @@
         }
 
         .list_body {
-            max-height: calc(100vh - 340px);
-            overflow-y: auto;
+            max-height: calc(100vh + 120px);
+            /*overflow-y: scroll;*/
         }
 
         .list_body .list_tr:nth-child(odd) {
@@ -441,7 +473,12 @@
             padding: 3px 12px 4px 12px;
             margin-left: 15px;
         }
-
+        .page_style{
+            position: absolute;
+            bottom: 0;
+            right: 30px;
+            margin-top: 500px !important;
+        }
         .list_wrap2 {
             margin-top: 10px;
             width: 100%;
@@ -498,8 +535,8 @@
         }
 
         .list_body2 {
-            max-height: calc(100% - 40px);
-            overflow-y: auto;
+            max-height: calc(100% - 4px);
+            /*overflow-y: auto;*/
             border-color: #ddd;
             border-style: solid;
             border-width: 0 1px 1px 1px;
@@ -636,26 +673,29 @@
 <body style="background: #f2f5f8 !important;">
 <div id="app" class="app"></div>
 <script type="x-template" id="cont_temp">
-    <div class="cont_wrap">
+    <div>
         <div class="header">
-            <div class="logo">后台管理系统</div>
+            <div class="logo">短信收发系统</div>
         </div>
-        <el-menu default-active="1" mode="horizontal"
-                 @select="handleSelect"
-                 theme="dark"
-                 background-color="#fff"
-                 text-color="#666"
-                 active-text-color="#409EFF">
-            <el-menu-item index="1">
-                <i class="el-icon-message"></i>
-                <span slot="title">批量发送短信</span>
-            </el-menu-item>
+        <div class="sidebar">
+            <el-menu default-active="1" mode="vertical" class="sidebar-el-menu"
+                     @select="handleSelect"
+                     theme="dark"
+                     background-color="#324157"
+                     text-color="#666"
+                     active-text-color="#409EFF">
+                <el-menu-item index="1">
+                    <i class="el-icon-message"></i>
+                    <span slot="title">批量发送短信</span>
+                </el-menu-item>
 
-            <el-menu-item index="2">
-                <i class="el-icon-menu"></i>
-                <span slot="title">历史列表</span>
-            </el-menu-item>
-        </el-menu>
+                <el-menu-item index="2">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">历史列表</span>
+                </el-menu-item>
+            </el-menu>
+        </div>
+
         <!--批量发送短信-->
         <div class="download" v-if="show_batch_msg">
             <h3 class="title">批量发送短信</h3>
@@ -664,20 +704,17 @@
                     <li>
                         <div class="msg">1.首次使用,请点击:</div>
                         <div class="btns">
-                            <a href="/message/batch/template/download/?typeId=1" target="_blank">下载导入模板1(学生学号)</a>
-                            <a href="/message/batch/template/download/?typeId=2" target="_blank">下载导入模板2(教师工号)</a>
+                            <a href="/message/batch/template/download/?typeId=2" target="_blank">下载导入模板1(教师工号)</a>
+                            <a href="/message/batch/template/download/?typeId=1" target="_blank">下载导入模板2(学生学号)</a>
                             <a href="/message/batch/template/download/?typeId=3" target="_blank">下载导入模板3(手机号)</a>
                         </div>
                     </li>
-
                     <li>
                         <div class="msg">2.请勿修改表头结构及内容。</div>
                     </li>
-
                     <li>
                         <div class="msg">3.所有“名称”字段请按照已上传的信息准确填写，不准确将无法匹配。</div>
                     </li>
-
                 </ul>
             </div>
         </div>
@@ -702,16 +739,15 @@
             </div>
         </div>
 
-
         <!--列表搜索-->
-        <div class="history_list" v-if="showHistory">
+        <div class="input_text" v-if="showHistory">
             <h3 class="title">历史列表</h3>
             <form id="search_history_form" class="part1" enctype="multipart/form-data">
                 <div class="form_item">
                     <label>批次号：</label>
                     <el-input style="width: 250px" placeholder="请输入批次号" v-model="search.codeNumber"/>
                 </div>
-                <div class="form_item">
+                <div class="form_item" style="margin-left: 45px;">
                     <label>发送状态：</label>
                     <el-select v-model="searchStatus" id="elSelect">
                         <el-option
@@ -722,25 +758,25 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="form_item" style="margin-left: 45px;">
+                <div class="form_item" style="margin-left: 45px;" v-if="false">
                     <label >本用户发送记录</label>
                     <el-checkbox v-model="radio" style="margin-left: 15px;">否</el-checkbox>
                 </div>
-                <el-button type="primary" @click="handleSearch">搜索</el-button>
+                <el-button type="primary" @click="handleSearch" style="margin-left: 25px;">搜索</el-button>
                 <el-button type="primary" @click="getList">刷新</el-button>
             </form>
 
-            <form action="" class="part1" enctype="multipart/form-data">
+            <form class="part1" enctype="multipart/form-data">
                 <div class="form_item" >
                     <label>姓名：</label>
                     <el-input style="width: 250px;margin-left: 15px;" placeholder="请输入姓名" v-model="username"></el-input>
                 </div>
 
-                <div class="form_item">
+                <div class="form_item" style="margin-left: 45px;">
                     <label>短信内容：</label>
                     <el-input style="width: 250px;" placeholder="请输入短信内容" v-model="messages"></el-input>
                 </div>
-                <div class="form_item">
+                <div class="form_item" style="margin-left: 25px;">
                     <label>手机号：</label>
                     <el-input style="width: 250px;" placeholder="请输入手机号" v-model="telphone"></el-input>
                 </div>
@@ -752,7 +788,7 @@
                     </el-date-picker>
                 </div>
                 <div class="form_item" >
-                    <label style="margin-left: 15px !important;">结束日期：</label>
+                    <label style="margin-left: 60px;">结束日期：</label>
                     <el-date-picker  v-model="dateEnd" :picker-options="endTime" type="datetime" placeholder="请选择日期">
                     </el-date-picker>
                 </div>
@@ -810,14 +846,16 @@
                     没有找到匹配的记录
                 </div>
             </div>
+
         </div>
-
-        <Page :total="total" :current="page" @pageChange="pageChange" v-if="showHistory">
-
-        </Page>
+        <div class="page_style">
+            <Page :total="total" :current="page" @pageChange="pageChange" v-if="showHistory">
+            </Page>
+        </div>
         <!--本次导入的列表 弹窗-->
         <ModalWrap ref="m_wrap" v-show="modal_flag" :import-res="import_res" @on-cancel="modalCancel"></ModalWrap>
     </div>
+
 </script>
 
 <!--导入列表的弹窗-->
@@ -868,7 +906,7 @@
                     <li class="col1">用户名</li>
                     <li class="col2">学号/工号</li>
                     <li class="col3">手机号</li>
-                    <li class="col4">msg</li>
+                    <li class="col4">内容</li>
                     <li class="col5">状态</li>
                     <li class="col6">返回结果</li>
                 </ul>
@@ -1458,7 +1496,7 @@
             return {
                 num_file: null, // 当前准备上传的号码文件
                 uploading: false, // 是否正在上传
-                temp_type: [{value: 1, label: '模板1(学生学号)'}, {value: 2, label: '模板2(教师工号)'}, {
+                temp_type: [{value: 1, label: '模板1(教师工号)'}, {value: 2, label: '模板2(学生学号)'}, {
                     value: 0,
                     label: '模板3(手机号)'
                 }], // 模板类型
@@ -1570,7 +1608,6 @@
                         that.uploading = false;
                         if (res.code === 0) {
                             that.import_res = res.data;
-                            console.log('res.data的值',res.data)
                             document.body.className = 'overhide';
                             that.modal_flag = true;
                             that.$refs.m_wrap.$refs.upload.handleUploadPolling()
@@ -1582,7 +1619,6 @@
                     },
                     error: function () {
                         that.uploading = false;
-                        console.log('文件导入失败');
                     }
                 })
             },
@@ -1691,12 +1727,9 @@
         },
         mounted: function () {
             this.getList();
-            // console.log('this.$refs.select_temp的值',this.$refs.select_temp.options)
             // this.$refs.select_temp.options.forEach(item => {
-            //     console.log(item.value)
             //     // this.temp_type = item.value;
             // })
-            // console.log(this.temp_type)
             // that.$refs.select_temp.options.forEach(item => {
             //     that.temp_type = item.value
             // })
