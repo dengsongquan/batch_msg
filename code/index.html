@@ -3,20 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>批量发送短信(szy)</title>
-    <link rel="stylesheet" type="text/css" href="/test/message/css/element-ui_lib_theme-chalk_index.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/message/css/element-ui_lib_theme-chalk_index.css" media="all"/>
 
-    <link rel="Shortcut Icon" href="/test/message/favicon.jpg" type="image/jpeg" />
+    <link rel="Shortcut Icon" href="/message/favicon.jpg" type="image/jpeg" />
 <!--    <link href="../src/css/element-ui_lib_theme-chalk_index.css">-->
 
-    <script type="text/javascript" src="/test/message/js/vue.js"></script>
+    <script type="text/javascript" src="/message/js/vue.js"></script>
     <!-- 必须在vue后引入 -->
-    <script src="/test/message/js/element-ui_lib_index.js"></script>
-    
-    <script type="text/javascript" src="/test/message/js/ajax.js"></script>
+    <script src="/message/js/element-ui_lib_index.js"></script>
+
+    <script type="text/javascript" src="/message/js/ajax.js"></script>
     <!--    <link rel="stylesheet" href="/message/css/bootstrap.min.css"/>-->
     <style>
         .el-button{
             padding: 7px 14px;
+        }
+        .header{
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            height: 70px;
+            font-size: 22px;
+            color: #ffffff;
+        }
+        .header .logo{
+            float: left;
+            width: 250px;
+            line-height: 70px;
         }
         .title {
             margin: 0;
@@ -622,12 +635,29 @@
 </head>
 <body style="background: #f2f5f8 !important;">
 <div id="app" class="app"></div>
-
-<!--main-->
 <script type="x-template" id="cont_temp">
     <div class="cont_wrap">
+        <div class="header">
+            <div class="logo">后台管理系统</div>
+        </div>
+        <el-menu default-active="1" mode="horizontal"
+                 @select="handleSelect"
+                 theme="dark"
+                 background-color="#fff"
+                 text-color="#666"
+                 active-text-color="#409EFF">
+            <el-menu-item index="1">
+                <i class="el-icon-message"></i>
+                <span slot="title">批量发送短信</span>
+            </el-menu-item>
+
+            <el-menu-item index="2">
+                <i class="el-icon-menu"></i>
+                <span slot="title">历史列表</span>
+            </el-menu-item>
+        </el-menu>
         <!--批量发送短信-->
-        <div class="download">
+        <div class="download" v-if="show_batch_msg">
             <h3 class="title">批量发送短信</h3>
             <div class="part1">
                 <ul class="download_list">
@@ -639,19 +669,21 @@
                             <a href="/message/batch/template/download/?typeId=3" target="_blank">下载导入模板3(手机号)</a>
                         </div>
                     </li>
+
                     <li>
                         <div class="msg">2.请勿修改表头结构及内容。</div>
                     </li>
+
                     <li>
                         <div class="msg">3.所有“名称”字段请按照已上传的信息准确填写，不准确将无法匹配。</div>
                     </li>
+
                 </ul>
             </div>
-
         </div>
 
         <!--导入文件-->
-        <div class="history_list" style="margin-top: 150px;">
+        <div class="history_list" style="margin-top: 150px;" v-if="show_batch_msg">
             <h3 class="title">导入文件</h3>
             <div class="temp_box part1">
                 <input type="file" @change="fileChange"
@@ -665,20 +697,16 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
-                <!--                <select ref="select_temp" @change="typeChange">-->
-                <!--                    <option value="1" selected>模板1(学生学号)</option>-->
-                <!--                    <option value="2">模板2(教师工号)</option>-->
-                <!--                    <option value="0">模板3(手机号)</option>-->
-                <!--                </select>-->
                 <el-button v-if="num_file && !uploading" type="primary" @click="confirmImport">确认导入</el-button>
                 <el-button type="primary" v-else disabled>确认导入</el-button>
             </div>
         </div>
 
+
         <!--列表搜索-->
-        <div class="history_list">
+        <div class="history_list" v-if="showHistory">
             <h3 class="title">历史列表</h3>
-            <form id="search_history_form" class="part1" enctype="multipart/form-data" action="">
+            <form id="search_history_form" class="part1" enctype="multipart/form-data">
                 <div class="form_item">
                     <label>批次号：</label>
                     <el-input style="width: 250px" placeholder="请输入批次号" v-model="search.codeNumber"/>
@@ -686,26 +714,18 @@
                 <div class="form_item">
                     <label>发送状态：</label>
                     <el-select v-model="searchStatus" id="elSelect">
-<!--                    <el-select v-model="search.status">-->
                         <el-option
                             v-for="item in search.status"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
                         </el-option>
-<!--                        <option value="0">全部</option>-->
-<!--                        <option value="1">上传成功</option>-->
-<!--                        <option value="2">上传失败</option>-->
-<!--                        <option value="3">发送成功</option>-->
-<!--                        <option value="4">发送失败</option>-->
                     </el-select>
                 </div>
                 <div class="form_item" style="margin-left: 45px;">
                     <label >本用户发送记录</label>
                     <el-checkbox v-model="radio" style="margin-left: 15px;">否</el-checkbox>
                 </div>
-
-
                 <el-button type="primary" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" @click="getList">刷新</el-button>
             </form>
@@ -715,11 +735,11 @@
                     <label>姓名：</label>
                     <el-input style="width: 250px;margin-left: 15px;" placeholder="请输入姓名" v-model="username"></el-input>
                 </div>
+
                 <div class="form_item">
                     <label>短信内容：</label>
                     <el-input style="width: 250px;" placeholder="请输入短信内容" v-model="messages"></el-input>
                 </div>
-
                 <div class="form_item">
                     <label>手机号：</label>
                     <el-input style="width: 250px;" placeholder="请输入手机号" v-model="telphone"></el-input>
@@ -737,11 +757,10 @@
                     </el-date-picker>
                 </div>
             </form>
-
         </div>
 
         <!--历史列表-->
-        <div class="list_wrap">
+        <div class="list_wrap" v-if="showHistory">
             <div class="list_box" >
                 <ul class="list_head col_box" :class="{pr17:scroll_flag}">
                     <li class="col1">工号/学号</li>
@@ -754,6 +773,7 @@
                     <li class="col8">返回信息</li>
                     <li class="col9">日期</li>
                 </ul>
+
                 <ul v-if="rows.length>0" class="list_body" ref="list_body">
                     <li v-for="item in rows" :key="item.id" class="list_tr col_box" :class="{info:row_id==item.id}"
                         @click="row_id=item.id">
@@ -792,30 +812,33 @@
             </div>
         </div>
 
-        <Page :total="total" :current="page" @pageChange="pageChange">
+        <Page :total="total" :current="page" @pageChange="pageChange" v-if="showHistory">
 
         </Page>
-
         <!--本次导入的列表 弹窗-->
         <ModalWrap ref="m_wrap" v-show="modal_flag" :import-res="import_res" @on-cancel="modalCancel"></ModalWrap>
     </div>
 </script>
+
 <!--导入列表的弹窗-->
 <script type="x-template" id="modal_list">
     <div class="modal_list">
         <ul class="list_msg">
             <li class="li1"><span class="sp1">批次号：</span><span class="sp2">{{ importRes.codeNumber }}</span></li>
+
             <template v-if="type==1">
                 <li><span class="sp1">总数：</span><span class="sp2">{{ upload_total }}</span></li>
                 <li><span class="sp1">成功：</span><span class="sp2">{{ upload_res.successSum }}</span></li>
                 <li><span class="sp1">失败：</span><span class="sp2">{{ upload_res.failureSum }}</span></li>
             </template>
+
             <template v-else>
                 <li><span class="sp1">总数：</span><span class="sp2">{{ send_res.totalSum }}</span></li>
                 <li><span class="sp1">成功：</span><span class="sp2">{{ send_res.successSum }}</span></li>
                 <li><span class="sp1">失败：</span><span class="sp2">{{ send_res.failureSum }}</span></li>
             </template>
         </ul>
+
         <div class="search">
             <el-select v-model="status">
                 <template v-if="type==1">
@@ -835,15 +858,6 @@
                        :value="item.value"
                     ></el-option>
                 </template>
-<!--                <option value="0">全部</option>-->
-<!--                <template v-if="type==1">-->
-<!--                    <option value="1">上传成功</option>-->
-<!--                    <option value="2">上传失败</option>-->
-<!--                </template>-->
-<!--                <template v-else>-->
-<!--                    <option value="3">发送成功</option>-->
-<!--                    <option value="4">发送失败</option>-->
-<!--                </template>-->
             </el-select>
             <el-button type="primary" class="btn l"  @click="handleSearch">搜索</el-button>
         </div>
@@ -1166,7 +1180,7 @@
     var ModalList = {
         template: '#modal_list',
         components: {
-            Page: Page
+            Page : Page
         },
         props: {
             importRes: {
@@ -1208,8 +1222,8 @@
             getList: function () {
                 var that = this;
                 var arr = ['pageNumber=' + this.page, 'pageSize=' + this.page_size, 'status=' + this.status_copy, 'codeNumber=' + this.importRes.codeNumber];
-                var url = '/test/message/batch/inputList/'
-                if (this.type === 2) url = '/test/message/batch/results'
+                var url = '/message/batch/inputList/'
+                if (this.type === 2) url = '/message/batch/results'
                 this.$ajax({
                     action: url + '?' + arr.join('&'),
                     method: 'get',
@@ -1282,7 +1296,7 @@
                     if (that.polling_flag) return;
                     that.polling_flag = true;
                     that.$ajax({
-                        action: '/test/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=2',
+                        action: '/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=2',
                         method: 'get',
                         success: function (res) {
                             that.polling_flag = false;
@@ -1317,7 +1331,7 @@
                     if (that.upload_polling_flag) return;
                     that.upload_polling_flag = true;
                     that.$ajax({
-                        action: '/test/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=1',
+                        action: '/message/batch/checkFinish?codeNumber=' + that.importRes.codeNumber + '&type=1',
                         method: 'get',
                         success: function (res) {
                             that.upload_polling_flag = false;
@@ -1389,7 +1403,7 @@
                 var data = new FormData();
                 data.append('codeNumber', this.importRes.codeNumber);
                 this.$ajax({
-                    action: '/test/message/batch/confirmSend',
+                    action: '/message/batch/confirmSend',
                     method: 'post',
                     data: data,
                     config: {
@@ -1437,7 +1451,7 @@
     new Vue({
         template: '#cont_temp',
         components: {
-            Page: Page,
+            Page : Page,
             ModalWrap: ModalWrap
         },
         data: function () {
@@ -1469,6 +1483,8 @@
                 username :'',//用户名
                 messages:'',//短信内容
                 telphone : '',//手机号
+                showHistory : false, //隐藏历史列表
+                show_batch_msg : true , //显示消息发送
                 dateTime:'',//开始日期
                 dateEnd: '',//结束日期
                 startTime:{
@@ -1513,11 +1529,6 @@
                 this.modal_flag = false;
                 document.body.className = '';
                 history.go(0)
-                // return new Promise(function (resolve,reject){
-                //     setTimeout(function (){
-                //         resolve(history.go(0))
-                //     })
-                // }).then(that.getList)
             },
             // 监听上传文件
             fileChange: function (e) {
@@ -1533,6 +1544,17 @@
                 // this.temp_type = e.target.value;
                 this.temp_type_value = e;
             },
+            //切换表头 2021-03-01新增
+            handleSelect(a,b){
+                if (a == "2") {
+                    this.show_batch_msg = false;
+                    this.showHistory = true;
+                }
+                else if( a == "1"){
+                    this.show_batch_msg = true;
+                    this.showHistory = false;
+                }
+            },
             // 确认上传
             confirmImport: function () {
                 var that = this;
@@ -1541,7 +1563,7 @@
                 data.append('userType', Number(this.temp_type_value)); //2020-11-09修改temp_type为 temp_type_value
                 this.uploading = true;
                 this.$ajax({
-                    action: '/test/message/batch/upload',
+                    action: '/message/batch/upload',
                     method: 'post',
                     data: data,
                     success: function (res) {
@@ -1573,7 +1595,7 @@
                     arr.push(key + '=' + this.search_copy[key]);
                 }
                 this.$ajax({
-                    action: '/test/message/batch/search/?' + arr.join('&'),
+                    action: '/message/batch/search/?' + arr.join('&'),
                     method: 'get',
                     success: function (res) {
                         if (that.total !== res.data.total) that.total = res.data.total;

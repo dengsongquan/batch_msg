@@ -1,8 +1,8 @@
 const path = require('path');
 
 module.exports = {
-    entry:'./src/main.js',
-    output:{
+    entry : './src/main.js',
+    output : {
         path: path.resolve(__dirname, '../dist'),
         filename: 'js/[name]_[hash:8].js'
     },
@@ -20,22 +20,23 @@ module.exports = {
             // }
         ]
     },
-    mode: 'development',
-    devtool:'cheap-module-eval-source-map', // 开发环境配置
-    devServer:{
-        contentBase:'./code',
-        host:'localhost',
-        port:8081,
-        open:false,
-        hotOnly:true,
-        proxy: {
-            '/test/message': {
-                target: 'http://10.99.44.150:7071', // 炼军本地message
-                changeOrigin: true,
+    mode : 'development',
+    devtool : 'cheap-module-eval-source-map', // 开发环境配置
+    devServer : {
+        contentBase : './code',
+        host : 'localhost',
+        port : 8081,
+        open : false,
+        hotOnly : true,
+        proxy : {
+            '/message' :  {
+                target: 'http://10.100.220.173:7070', // 测试环境
+                // target : 'http://10.99.44.150:7070', // 炼军本地message
+                changeOrigin : true,
                 // pathRewrite: {
                 //     '^/message': '/'
                 // }
             }
         }
     }
-}
+};
